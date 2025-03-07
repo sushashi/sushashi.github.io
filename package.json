@@ -6,7 +6,7 @@
   "homepage": "https://sushashi.github.io/",
   "scripts": {
     "dev": "vite",
-    "predeploy" : "npm run build",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist --repo https://github.com/sushashi/sushashi.github.io.git",
     "build": "vite build",
     "lint": "eslint .",
@@ -14,7 +14,8 @@
   },
   "dependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "text-fit": "^1.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
