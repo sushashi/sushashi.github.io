@@ -80,6 +80,13 @@
 
 .calculator-panel {
   width: min(100%, 390px);
+}
+
+.calculator-panel.is-hidden {
+  display: none;
+}
+
+.calculator-panel.is-active {
   animation: calculator-appear 200ms ease both;
 }
 
@@ -96,7 +103,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .mode-switch button,
-  .calculator-panel {
+  .calculator-panel.is-active {
     animation: none;
     transition: none;
   }
