@@ -4,6 +4,7 @@ import Wrapper from './components/Wrapper'
 import Screen from './components/Screen'
 import ButtonBox from './components/ButtonBox'
 import Button from './components/Button'
+import ScientificCalculator from './components/ScientificCalculator'
 
 const btnValues = [
   ['C', 'DEL', '%', '÷'],
@@ -40,6 +41,9 @@ const calculate = (first, second, operator) => {
 };
 
 const App = () => {
+  const [mode, setMode] = useState('basic');
+  const [angleMode, setAngleMode] = useState('DEG');
+  const [scientific, setScientific] = useState({ expression: '', result: null, error: '' });
   const [calc, setCalc] = useState({
     display: '0',
     storedValue: null,
@@ -166,8 +170,60 @@ const App = () => {
     }
   };
 
+  const evaluateScientific = async () => {
+    try {
+      const { evaluateScientificExpression } = await import('./math/scientific');
+      const result = evaluateScientificExpression(scientific.expression, angleMode);
+      setScientific((current) => ({ ...current, result, error: '' }));
+    } catch {
+      setScientific((current) => ({ ...current, result: null, error: 'Check expression' }));
+    }
+  };
+
+  const handleScientificButton = (value) => {
+    if (value === 'ANGLE') {
+      setAngleMode((current) => current === 'DEG' ? 'RAD' : 'DEG');
+      return;
+    }
+    if (value === 'C') {
+      setScientific({ expression: '', result: null, error: '' });
+      return;
+    }
+    if (value === '=') {
+      evaluateScientific();
+      return;
+    }
+
+    setScientific((current) => {
+      const binaryOperator = ['+', '-', '*', '/', '^'].includes(value);
+      const expression = current.result !== null && binaryOperator
+        ? String(current.result)
+        : current.result !== null && /^\d$/.test(value)
+          ? ''
+          : current.result !== null
+            ? String(current.result)
+            : current.expression;
+
+      if (value === 'DEL') {
+        return { expression: expression.slice(0, -1), result: null, error: '' };
+      }
+
+      return {
+        expression: appendScientificInput(expression, value),
+        result: null,
+        error: '',
+      };
+    });
+  };
+
+  const handleScientificChange = (expression) => {
+    setScientific({ expression, result: null, error: '' });
+  };
+
   useEffect(() => {
     const handleKeyDown = (event) => {
+      if (mode === 'scientific' && event.target instanceof HTMLInputElement) return;
+
       const keyMap = {
         Enter: '=',
         '=': '=',
@@ -180,6 +236,15 @@ const App = () => {
         '-': '−',
       };
       const value = keyMap[event.key] || event.key;
+
+      if (mode === 'scientific') {
+        const scientificKey = { '−': '-', '×': '*', '÷': '/' }[value] || value;
+        if (/^\d$/.test(value) || ['.', '+', '-', '*', '/', '^', '(', ')'].includes(scientificKey)) {
+          event.preventDefault();
+          handleScientificButton(scientificKey);
+        }
+        return;
+      }
 
       if (/^\d$/.test(value) || ['.', '%', '+', '−', '×', '÷', '=', 'DEL', 'C'].includes(value)) {
         event.preventDefault();
@@ -197,31 +262,85 @@ const App = () => {
         <p className="app-kicker"><span className="heading-mark" /> DAILY TOOL / 01</p>
         <h1>Calculator</h1>
       </header>
-      <Wrapper>
-        <Screen value={calc.error ? calc.display : formatDisplay(calc.display)} expression={calc.expression} />
-        <ButtonBox>
-          {btnValues.flat().map((button) => {
-            const classNames = [
-              ['+', '−', '×', '÷'].includes(button) ? 'operator' : '',
-              button === '=' ? 'equals' : '',
-              ['C', 'DEL', '%', '±'].includes(button) ? 'utility' : '',
-              calc.operator === button ? 'active' : '',
-            ].filter(Boolean).join(' ');
+      <nav className="mode-switch" aria-label="Calculator mode">
+        {['basic', 'scientific'].map((option) => (
+          <button
+            key={option}
+            className={mode === option ? 'selected' : ''}
+            type="button"
+            aria-pressed={mode === option}
+            onClick={() => setMode(option)}
+          >
+            {option === 'basic' ? 'Basic' : 'Scientific'}
+          </button>
+        ))}
+      </nav>
+      <div className="calculator-panel" key={mode}>
+        {mode === 'basic' ? (
+          <Wrapper>
+            <Screen value={calc.error ? calc.display : formatDisplay(calc.display)} expression={calc.expression} />
+            <ButtonBox>
+              {btnValues.flat().map((button) => {
+                const classNames = [
+                  ['+', '−', '×', '÷'].includes(button) ? 'operator' : '',
+                  button === '=' ? 'equals' : '',
+                  ['C', 'DEL', '%', '±'].includes(button) ? 'utility' : '',
+                  calc.operator === button ? 'active' : '',
+                ].filter(Boolean).join(' ');
 
-            return (
-              <Button
-                key={button}
-                className={classNames}
-                value={button}
-                ariaLabel={button === 'DEL' ? 'Backspace' : button === '±' ? 'Change sign' : button}
-                onClick={() => handleButton(button)}
-              />
-            );
-          })}
-        </ButtonBox>
-      </Wrapper>
+                return (
+                  <Button
+                    key={button}
+                    className={classNames}
+                    value={button}
+                    ariaLabel={button === 'DEL' ? 'Backspace' : button === '±' ? 'Change sign' : button}
+                    onClick={() => handleButton(button)}
+                  />
+                );
+              })}
+            </ButtonBox>
+          </Wrapper>
+        ) : (
+          <Wrapper className="scientific-wrapper">
+            <ScientificCalculator
+              expression={scientific.expression}
+              result={scientific.result}
+              error={scientific.error}
+              angleMode={angleMode}
+              onAngleModeChange={() => handleScientificButton('ANGLE')}
+              onExpressionChange={handleScientificChange}
+              onButton={handleScientificButton}
+            />
+          </Wrapper>
+        )}
+      </div>
     </main>
   );
+};
+
+const appendScientificInput = (expression, value) => {
+  const endsWithValue = /(?:\d|\)|pi|e)$/i.test(expression.trim());
+  const multiplication = endsWithValue ? '*' : '';
+
+  if (['sin', 'cos', 'tan', 'ln', 'log', '√'].includes(value)) {
+    const functionName = value === '√' ? 'sqrt' : value;
+    if (expression && endsWithValue) return `${functionName}(${expression})`;
+    return `${expression}${multiplication}${functionName}(`;
+  }
+  if (value === 'π' || value === 'e') return `${expression}${multiplication}${value === 'π' ? 'pi' : 'e'}`;
+  if (value === 'x²') return expression ? `(${expression})^2` : '0^2';
+  if (value === 'xʸ') return `${expression}^`;
+  if (value === '1/x') return expression ? `1/(${expression})` : '1/(';
+  if (value === '±') return expression ? `-(${expression})` : '-';
+  if (value === '%') return expression ? `(${expression})/100` : '0.01';
+  if (value === '.') {
+    const currentNumber = expression.match(/(?:^|[+\-*/^(])\s*(\d*\.)?\d*$/);
+    if (currentNumber?.[0].includes('.')) return expression;
+    return `${expression}${endsWithValue ? '*' : ''}0.`;
+  }
+  if (/^\d$/.test(value) && /(?:\)|pi|e)$/i.test(expression.trim())) return `${expression}*${value}`;
+  if (value === ')' && (expression.match(/\(/g) || []).length <= (expression.match(/\)/g) || []).length) return expression;
+  return `${expression}${value}`;
 };
 
 export default App;

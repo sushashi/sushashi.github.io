@@ -1,16 +1,29 @@
-## Test React on github pages with a calculator
+# Calculator
 
-Source code :[https://www.sitepoint.com/react-tutorial-build-calculator-app/](https://www.sitepoint.com/react-tutorial-build-calculator-app/)
+A responsive calculator built with React and Vite. It offers two modes, with the original basic calculator kept as the default.
 
-# React + Vite
+## Modes
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- **Basic:** addition, subtraction, multiplication, division, percentages, sign changes, and decimals.
+- **Scientific:** expression parsing with operator precedence and parentheses, trigonometry, square roots, powers, logarithms, reciprocals, and the constants `pi` and `e`. Trigonometry can use degrees or radians.
 
-Currently, two official plugins are available:
+Each mode keeps its current input when switching. The scientific evaluator uses Math.js, and invalid or non-finite results are shown as an input error.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Controls
 
-## Expanding the ESLint configuration
+- In Basic mode, use the on-screen keys or type numbers and operators. `Enter` evaluates, `Backspace` deletes, and `Escape` clears.
+- In Scientific mode, use the keypad or type an expression such as `sin(30) + 2^3`. Press `Enter` to evaluate. Use the `DEG`/`RAD` key to change angle units.
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Development
+
+```sh
+npm install
+npm run dev
+```
+
+Run the evaluator tests with `npm test`. Run `npm run lint` and `npm run build` to check the app and create a production build. `npm run deploy` builds and publishes the site to GitHub Pages.
+
+## Credits
+
+- The basic calculator was originally inspired by the [SitePoint React calculator tutorial](https://www.sitepoint.com/react-tutorial-build-calculator-app/).
+- Developed with assistance from GitHub Copilot AI.

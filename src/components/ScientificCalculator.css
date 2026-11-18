@@ -1,0 +1,96 @@
+.scientific-calculator {
+  display: grid;
+  gap: 12px;
+}
+
+.scientific-display {
+  min-width: 0;
+  min-height: 116px;
+  padding: 14px 16px;
+  border-radius: 6px;
+  background: var(--screen);
+  color: #f7faf6;
+}
+
+.scientific-display label {
+  display: block;
+  margin-bottom: 10px;
+  color: #a7b9aa;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.scientific-display input {
+  display: block;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  background: transparent;
+  color: #f7faf6;
+  font: inherit;
+  font-size: 1.15rem;
+}
+
+.scientific-display input::placeholder {
+  color: #819387;
+}
+
+.scientific-display input:focus-visible {
+  outline: 2px solid #a7c7a9;
+  outline-offset: 4px;
+}
+
+.scientific-result {
+  display: block;
+  min-height: 1.2em;
+  margin-top: 10px;
+  color: #c9e2ca;
+  font-size: 1rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.scientific-result.error {
+  color: #ffb59d;
+}
+
+.scientific-keypad {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(7, 48px);
+  gap: 7px;
+}
+
+.scientific-keypad .calculator-key {
+  font-size: 0.95rem;
+}
+
+.scientific-keypad .calculator-key.function {
+  background: #e7eee6;
+  color: #49624e;
+  font-size: 0.82rem;
+}
+
+.scientific-keypad .calculator-key.function:hover {
+  background: #dce8dc;
+}
+
+.scientific-keypad .calculator-key.utility {
+  font-size: 0.72rem;
+}
+
+.scientific-keypad .calculator-key.zero {
+  grid-column: span 2;
+}
+
+.scientific-keypad .calculator-key.equals {
+  font-size: 1.1rem;
+}
+
+@media (max-width: 360px) {
+  .scientific-keypad {
+    grid-template-rows: repeat(7, 44px);
+    gap: 6px;
+  }
+}
