@@ -1,10 +1,10 @@
 import "./Screen.css";
-import {TextFit} from "text-fit";
 
-const Screen = ({ value }) => {
+const Screen = ({ value, expression }) => {
     return (
         <div className="screen">
-            {value}
+            <div className="screen-expression">{expression}</div>
+            <div className={`screen-value${value === 'Cannot divide by zero' ? ' error' : ''}`} aria-live="polite">{value}</div>
         </div>
     )
 }

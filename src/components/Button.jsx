@@ -1,8 +1,8 @@
 import "./Button.css";
 
-const Button = ({ className, value, onClick }) => {
+const Button = ({ className = '', value, onClick, ariaLabel }) => {
   return (
-    <button className={className} onClick={onClick}>
+    <button className={`calculator-key ${className}`} onClick={onClick} aria-label={ariaLabel || value} type="button">
       {value}
     </button>
   );

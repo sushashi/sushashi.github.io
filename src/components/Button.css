@@ -1,23 +1,53 @@
-button {
-    border: none;
-    background-color: rgb(49, 24, 212);
-    font-size: 24px;
-    color: rgb(255, 255, 255);
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 10px;
-    outline: none;
+.calculator-key {
+  min-width: 0;
+  border: 0;
+  border-radius: 6px;
+  background: var(--key);
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 1.15rem;
+  font-weight: 600;
+  transition: background-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.calculator-key:hover {
+  background: var(--key-hover);
+  transform: translateY(-1px);
+}
+
+.calculator-key:active {
+  transform: translateY(0);
+}
+
+.calculator-key.utility {
+  color: #607066;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.calculator-key.operator {
+  background: var(--operator);
+  color: #45684f;
+}
+
+.calculator-key.operator:hover,
+.calculator-key.operator.active {
+  background: #d3e4d5;
+  color: #294d34;
+}
+
+.calculator-key.equals {
+  background: var(--accent);
+  color: #fff;
+  font-size: 1.3rem;
+}
+
+.calculator-key.equals:hover {
+  background: #c65d43;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calculator-key {
+    transition: none;
   }
-  
-  button:hover {
-    background-color: rgb(61, 43, 184);
-  }
-  
-  .equals {
-    grid-column: 3 / 5;
-    background-color: rgb(243, 61, 29);
-  }
-  
-  .equals:hover {
-    background-color: rgb(228, 39, 15);
-  }
+}
